@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Performance Prediction</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #dbeafe, #eef2ff, #f8fafc);
+            overflow-x: hidden;
+            color: #172554;
+        }
+
+        /* =========================
+           FLOATING EDUCATION ITEMS
+           ========================= */
+
+        .floating {
+            position: fixed;
+            font-size: 28px;
+            opacity: 0.25;
+            pointer-events: none;
+            animation: float 10s infinite ease-in-out;
+            z-index: 0;
+        }
+
+        .formula {
+            position: fixed;
+            font-size: 22px;
+            font-weight: bold;
+            color: #2563eb;
+            opacity: 0.22;
+            pointer-events: none;
+            animation: moveFormula 14s infinite linear;
+            z-index: 0;
+        }
+
+        @keyframes float {
+
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-80px) rotate(10deg);
+            }
+
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+        }
+
+        @keyframes moveFormula {
+
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+            }
+
+            100% {
+                transform: translateY(-120vh) rotate(360deg);
+            }
+
+        }
+
+        /* Education icons */
+
+        .book {
+            top: 10%;
+            left: 5%;
+        }
+
+        .cap {
+            top: 20%;
+            right: 7%;
+        }
+
+        .pencil {
+            top: 55%;
+            left: 8%;
+        }
+
+        .bulb {
+            top: 75%;
+            right: 8%;
+        }
+
+        .computer {
+            top: 40%;
+            right: 4%;
+        }
+
+        .calculator {
+            top: 85%;
+            left: 12%;
+        }
+
+        .formula1 {
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .formula2 {
+            left: 30%;
+            animation-delay: 3s;
+        }
+
+        .formula3 {
+            left: 55%;
+            animation-delay: 6s;
+        }
+
+        .formula4 {
+            left: 80%;
+            animation-delay: 2s;
+        }
+
+        /* =========================
+           MAIN CONTAINER
+           ========================= */
+
+        .container {
+            width: 92%;
+            max-width: 950px;
+            margin: 50px auto;
+            padding: 35px;
+            background: rgba(255, 255, 255, 0.94);
+            border-radius: 25px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* =========================
+           HEADER
+           ========================= */
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        .header p {
+            font-size: 17px;
+            color: #475569;
+            margin-top: 10px;
+        }
+
+        /* =========================
+           FORM
+           ========================= */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+        }
+
+        .input-box label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .input-box input {
+            width: 100%;
+            padding: 13px;
+            border: 2px solid #dbeafe;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .input-box input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.15);
+        }
+
+        /* =========================
+           BUTTON
+           ========================= */
+
+        .predict-btn {
+            width: 100%;
+            margin-top: 30px;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            background: #2563eb;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .predict-btn:hover {
+            transform: translateY(-3px);
+            background: #1d4ed8;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        /* =========================
+           RESULT
+           ========================= */
+
+        .result {
+            margin-top: 35px;
+            padding: 30px;
+            border-radius: 18px;
+            background: #f8fafc;
+            border: 2px solid #dbeafe;
+            text-align: center;
+            animation: resultAppear 0.8s ease;
+        }
+
+        @keyframes resultAppear {
+
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        }
+
+        .result h2 {
+            font-size: 30px;
+            margin-bottom: 15px;
+        }
+
+        .result p {
+            font-size: 18px;
+            margin: 12px 0;
+        }
+
+        .confidence {
+            font-weight: bold;
+            font-size: 21px !important;
+        }
+
+        .success {
+            color: #15803d;
+        }
+
+        .fail {
+            color: #dc2626;
+        }
+
+        /* =========================
+           FOOTER
+           ========================= */
+
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* =========================
+           MOBILE
+           ========================= */
+
+        @media (max-width: 700px) {
+
+            .container {
+                margin: 20px auto;
+                padding: 22px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+    <!-- Floating study icons -->
+
+    <div class="floating book">📚</div>
+    <div class="floating cap">🎓</div>
+    <div class="floating pencil">✏️</div>
+    <div class="floating bulb">💡</div>
+    <div class="floating computer">💻</div>
+    <div class="floating calculator">🧮</div>
+
+
+    <!-- Floating formulas -->
+
+    <div class="formula formula1">E = mc²</div>
+    <div class="formula formula2">a² + b² = c²</div>
+    <div class="formula formula3">F = ma</div>
+    <div class="formula formula4">∑ x²</div>
+
+
+    <!-- Main content -->
+
+    <div class="container">
+
+        <div class="header">
+
+            <h1>🎓 Student Performance Prediction</h1>
+
+            <p>
+                AI-powered student performance analysis system
+            </p>
+
+        </div>
+
+
+        <!-- Prediction form -->
+
+        <form action="/predict" method="POST">
+
+            <div class="form-grid">
+
+
+                <div class="input-box">
+
+                    <label>📚 Study Hours</label>
+
+                    <input
+                        type="number"
+                        name="study_hours"
+                        step="0.1"
+                        min="0"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-box">
+
+                    <label>📅 Attendance (%)</label>
+
+                    <input
+                        type="number"
+                        name="attendance"
+                        min="0"
+                        max="100"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-box">
+
+                    <label>📊 Previous Marks</label>
+
+                    <input
+                        type="number"
+                        name="previous_marks"
+                        min="0"
+                        max="100"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-box">
+
+                    <label>📝 Assignment Score</label>
+
+                    <input
+                        type="number"
+                        name="assignment_score"
+                        min="0"
+                        max="100"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-box">
+
+                    <label>😴 Sleep Hours</label>
+
+                    <input
+                        type="number"
+                        name="sleep_hours"
+                        step="0.1"
+                        min="0"
+                        max="24"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="predict-btn"
+            >
+                🔮 Predict Student Performance
+            </button>
+
+        </form>
+
+
+        <!-- Result -->
+
+        {% if prediction %}
+
+        <div class="result">
+
+            {% if prediction|upper == "PASS" %}
+
+                <h2 class="success">
+                    ✅ Prediction: PASS
+                </h2>
+
+                <p>
+                    The student is predicted to <strong>pass</strong>.
+                </p>
+
+            {% else %}
+
+                <h2 class="fail">
+                    ⚠️ Prediction: FAIL
+                </h2>
+
+                <p>
+                    The student is predicted to <strong>fail</strong>.
+                </p>
+
+            {% endif %}
+
+
+            {% if confidence is not none %}
+
+            <p class="confidence">
+                🎯 Prediction Confidence:
+                {{ confidence }}%
+            </p>
+
+            {% endif %}
+
+
+            <p>
+                📊 Student Performance Analysis Completed
+            </p>
+
+        </div>
+
+        {% endif %}
+
+
+        <div class="footer">
+
+            Student Performance Prediction System
+            <br>
+            Machine Learning + Flask
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
